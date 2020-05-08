@@ -308,9 +308,11 @@ func (s *schemaBuilder) buildFromType(tpe types.Type, tgt swaggerTypable) error 
 			}
 
 			if enumName, ok := enumName(cmt); ok {
-				enumValues, _ := s.ctx.FindEnumValues(pkg, enumName)
+				enumDescs, enumNames, enumValues, _ := s.ctx.FindEnumDetail(pkg, enumName)
 				if len(enumValues) > 0 {
 					tgt.WithEnum(enumValues...)
+					tgt.AddExtension("x-go-const-names", enumNames)
+					tgt.AddExtension("x-enum-description", enumDescs)
 					enumTypeName := reflect.TypeOf(enumValues[0]).String()
 					_ = swaggerSchemaForType(enumTypeName, tgt)
 				}
